@@ -1,5 +1,6 @@
 package hiber.dao;
 
+import hiber.model.Car;
 import hiber.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,28 +14,32 @@ import java.util.List;
 @Repository
 public class UserDaoImp implements UserDao {
 
-   @Autowired
-   private SessionFactory sessionFactory;
+    @Autowired
+    private SessionFactory sessionFactory;
 
-   @Override
-   public void add(User user) {
-      sessionFactory.getCurrentSession().save(user);
-   }
+    @Override
+    public void add(User user) {
+        sessionFactory.getCurrentSession().save(user);
+    }
 
-   @Override
-   @SuppressWarnings("unchecked")
-   public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
-      return query.getResultList();
-   }
+    public void add(Car car) {
+        sessionFactory.getCurrentSession().save(car);
+    }
 
-   public List <User> getUserByCar(String model, int series) {
-      Session session = sessionFactory.openSession();
-      Query query = session.createQuery("SELECT user FROM User user LEFT JOIN FETCH user.car WHERE user.car.model = :carModel and user.car.series = :carSeries")
-              .setParameter("carModel", model)
-              .setParameter("carSeries", series);
-      List<User> userByCar = query.getResultList();
-      session.close();
-      return userByCar;
-   }
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> listUsers() {
+        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User");
+        return query.getResultList();
+    }
+
+    public List<User> getUserByCar(String model, int series) {
+        Session session = sessionFactory.openSession();
+        Query query = session.createQuery("SELECT user FROM User user LEFT JOIN FETCH user.car WHERE user.car.model = :carModel and user.car.series = :carSeries")
+                .setParameter("carModel", model)
+                .setParameter("carSeries", series);
+        List<User> userByCar = query.getResultList();
+        session.close();
+        return userByCar;
+    }
 }
